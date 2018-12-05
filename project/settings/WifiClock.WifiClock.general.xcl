@@ -1,0 +1,15 @@
+"D:\Program Files\IAR Systems\Embedded Workbench 8.2\arm\bin\armproc.dll" 
+
+"D:\Program Files\IAR Systems\Embedded Workbench 8.2\arm\bin\armstlink2.dll" 
+
+"E:\Projects\WifiClock\source_iar_2018_temp\project\WifiClock\Exe\WifiClock.out" 
+
+--plugin="D:\Program Files\IAR Systems\Embedded Workbench 8.2\arm\bin\armbat.dll" 
+
+--device_macro="D:\Program Files\IAR Systems\Embedded Workbench 8.2\arm\config\debugger\ST\STM32F0xx.dmac" 
+
+--flash_loader="D:\Program Files\IAR Systems\Embedded Workbench 8.2\arm\config\flashloader\ST\FlashSTM32F051x8.board" 
+
+
+
+

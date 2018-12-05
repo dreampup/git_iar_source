@@ -1,0 +1,36 @@
+Airkiss配网流程：
+--》配置WiFi模组工作模式为单STA模式，并把配置保存在flash
+AT+CWMODE_DEF=1
+
+
+OK
+--》使能上电自动连接AP
+AT+CWAUTOCONN=1
+
+
+OK
+--》支持ESP-Touch和Airkiss智能配网
+AT+CWSTARTSMART=3
+
+
+OK
+smartconfig type:AIRKISS
+Smart get wifi info
+ssid:xxx
+password:xxxxxxxx
+WIFI CONNECTED
+WIFI GOT IP
+smartconfig connected wifi
+
+--》无论配网是否成功，都需要释放快连所占的内存
+AT+CWSTOPSMART
+
+
+OK
+--》查询网络连接状态
+AT+CIPSTATUS
+
+STATUS:2
+
+OK
+

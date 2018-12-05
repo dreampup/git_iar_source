@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<userOverrides>
+  <override>
+    <path>E:\Projects\WifiClock\source\Drivers\STM32F0xx_HAL_Driver\Src\stm32f0xx_hal.c</path>
+    <encoding>System</encoding>
+  </override>
+  <override>
+    <path>E:\Projects\WifiClock\source_iar_2018_temp\user\common\src\w25xflash.c</path>
+    <encoding>GB2312</encoding>
+  </override>
+</userOverrides>
+
+

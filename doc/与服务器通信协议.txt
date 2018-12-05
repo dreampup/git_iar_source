@@ -1,0 +1,240 @@
+
+分发流程图：
+
+CLOCK           |       SERVER    | 
+			          |                 |                
+"ProductID"	 -->|                 |              
+
+一、时钟->服务器
+时钟每次链接服务器时，首先必须发送ID信息，如果不匹配，会被服务器踢掉，
+如果匹配，则接下来的通信都不需要发送ID信息，如update等被动命令。
+
+1、主动心跳
+json:
+{
+"ProductID":"2017V00N00000000"
+}
+
+注释:
+display:指当前的显示方式
+实时传回当前室内温湿度，供APP使用
+时钟会每隔5-10s连接一次服务器，以便实时获得服务器推送的消息。
+2、消息指令
+json:
+{
+"message":{
+"command":"get_weather",
+}
+}
+注释:
+command:get_weather,get_clock等
+
+3、版本信息,每次开机或者重启时发送
+json:
+{
+"vision":"V1.0"
+}
+
+
+
+4、
+APP提示主机检查新版本，服务器首先读取vision表的ClientFlash与ServiceFlash进行比对，如果不想等，则修改vision表WhoNeed的内容，同时置位info表的NeedUpdate，当终端连接后检测到NeedUpdate==true，就会访问vision表中的WhoNeed，然后根据这里面的值进行相应的升级处理，向下发送update指令，终端回复：
+json:
+{
+"transfer":0
+}
+transfer:0~ziseof(file)分别表示开始接收0~传输成功
+
+vision表中的WhoNeed的内容格式,见服务器->时钟 5：
+
+
+
+
+
+二、服务器->时钟（分为请求回复和主动回复）
+1、请求回复天气
+json:
+{
+"weather":
+{
+"today":
+{
+"day_weather": "阴",
+"night_weather": "多云",
+"night_temperature": "7",
+"day_temperature": "13",
+},
+"tomorrow":
+{
+"day_weather": "阴",
+"night_weather": "多云",
+"night_temperature": "7",
+"day_temperature": "13",
+},
+"after":
+{
+"day_weather": "阴",
+"night_weather": "多云",
+"night_temperature": "7",
+"day_temperature": "13",
+}
+}
+}
+2、请求回复时间
+json:
+{
+"clock":
+{
+"date":"2017-10-17",
+"time":"20:01:50"
+}
+}
+3、主动回复文字消息
+json:
+{
+"message":
+{
+"len":50,
+"content":"xxx",
+}
+}
+type:为文字，如为语音则在第5步里面的msg
+
+4、主动回复系统配置
+json:
+{
+"setting":{
+"display":
+{
+"method":"1"
+"size1":"1"
+"size2":"1"
+}
+"message":
+{
+"times":"10",
+"freq":"5s"
+}
+}
+}
+解释:display提供N种显示方式（如时间字体，显示区域，滑动方式等）。
+
+5、系统升级(可由APP调用发起)
+json:
+{
+"update":
+{
+"type":"app1",
+"addr":"04C11DB7"
+"size":1024
+}
+}
+
+type：app1/app2/ziku/wav等为升级内容，
+addr：
+  当type=app1/app2时,addr为crc32校验码："04C11DB7"
+	当type=ziku时,addr为哪个字库：ZK5X7_1/ZK5X7_2/ZKSYMB_1/ZKSYMB_2/ZKSYMB_U/ZK7X14_1/ZK7X14_2
+	当type=wav时,addr为哪个音频: CLOCK1..CLOCK24/SYSTEM1
+size：为文件的大小byte
+
+
+6、向“时钟”发送第5步，得到时钟的回复后，开始直接发送二进制文件
+
+
+
+---------------------------------------------
+
+APP->服务器：
+1、绑定请求
+json:
+{
+"band":
+{
+"product_id":""
+"weixin_id":"xxx"
+}
+}
+
+设置：
+2、系统配置
+json:
+{
+"set":
+{
+"display":"1",
+"beep":"on"
+
+}
+}
+
+--------------------------------------------------------------------------
+设置数据库db_name默认为utf8:
+ALTER DATABASE `db_name` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+设置表tb_name默认编码为utf8:
+ALTER TABLE `tb_name` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+------------vision表测试指令：------------
+插入：
+INSERT INTO vision (ProductID, Flash, Ziku) VALUES ('2017V00N00000000',COLUMN_CREATE('vision',1,'size',1024),COLUMN_CREATE('vision',2,'size',1024));
+查询：
+SELECT COLUMN_JSON(Flash) AS 'flash',COLUMN_JSON(Ziku) AS 'ziku' FROM vision WHERE ProductID='2017V00N00000000'; 
+修改：
+UPDATE vision SET Flash= COLUMN_CREATE('vision',1,'size',1024),Ziku=COLUMN_CREATE('vision',2,'size',2024) WHERE ProductID='2017V00N00000000';
+
+----------message表测试指令：-----------
+插入： 
+INSERT INTO message (ProductID,Contents) VALUES ('2017V00N00000000',COLUMN_CREATE('type','word','content','hello world','times',10,'frequence',5));
+查询： 
+SELECT COLUMN_JSON(Contents) AS 'message' FROM message WHERE ProductID='2017V00N00000000'; 
+修改：
+UPDATE message SET Contents= COLUMN_CREATE('type','word','content','hello world','times',10,'frequence',5) WHERE ProductID='2017V00N00000000';
+
+---------weather表测试指令：------------
+插入： 
+INSERT INTO weather (ProductID ,City,WeixinID,Today,Tomorrow,AfterTomorrow) VALUES ( '2017V00N00000000','武汉', 'dreampup',	,COLUMN_CREATE( 'day_weather','阴','night_weather','多云','night_temperature','7','day_temperature','13'),COLUMN_CREATE( 'day_weather','阴','night_weather','多云','night_temperature','7','day_temperature','13'));
+查询：
+select ProductID,column_json(Today) as 'today',column_json(Tomorrow) as 'tomorrow',column_json(AfterTomorrow) as 'after' from weather; 
+修改：
+UPDATE weather SET Tomorrow =COLUMN_CREATE( 'day_weather','阴','night_weather','多云','night_temperature','7','day_temperature','13');
+
+---------info表测试指令：------------
+插入：
+INSERT INTO `info` (`ID`, `ProductID`, `VisionFlash`, `VisionZK`, `Display`, `FirstReg`) VALUES ('1', '2017V00N00000000', 'V0.1', 'V0.1', '1', '2017-11-14');
+
+修改：
+UPDATE info SET GetMessage=true WHERE ProductID='2017V00N00000000';
+
+---------systemfile表测试指令：------------
+插入： 
+INSERT INTO systemfile (APP1) VALUES (COLUMN_CREATE('type','app1','crc32','04C11DB7','size',1024));
+查询：
+SELECT COLUMN_JSON(APP1) AS 'app1' FROM systemfile;
+修改：
+ 
+
+终端json指令测试命令：
+
+{"ProductID":"2017V00N00000000"}
+
+{"message":{"command":"get_weather"}}
+{"message":{"command":"get_clock"}}
+
+{"transfer":0}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

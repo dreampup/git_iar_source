@@ -1,0 +1,62 @@
+[Stack]
+FillEnabled=1
+OverflowWarningsEnabled=1
+WarningThreshold=90
+SpWarningsEnabled=1
+WarnLogOnly=1
+UseTrigger=1
+TriggerName=main
+LimitSize=0
+ByteLimit=50
+[StLinkDriver]
+WatchCond=_ 0
+Watch0=_ 0 "" 0 "" 0 "" 0 "" 0 0 0 0
+Watch1=_ 0 "" 0 "" 0 "" 0 "" 0 0 0 0
+CStepIntDis=_ 0
+stlinkserialNo=USB0
+stlinkfoundProbes=
+[DebugChecksum]
+Checksum=-1352796619
+[Exceptions]
+StopOnUncaught=_ 0
+StopOnThrow=_ 0
+[CallStack]
+ShowArgs=0
+[Disassembly]
+MixedMode=1
+[watch_formats]
+Fmt0={W}1:Recv_End_Flag	4	0
+Fmt1={W}1:hdma->Instance->CNDTR	4	0
+Fmt2={W}1:huart->RxXferCount	3	0
+Fmt3={W}1:neww	4	0
+Fmt4={W}1:recBuff1.iReceiveSize	4	0
+Fmt5={W}1:recBuff2.iReceiveSize	4	0
+Fmt6={W}1:res	3	0
+Fmt7={W}1:sta	3	0
+[TermIOLog]
+LoggingEnabled=_ 0
+LogFile=_ ""
+[CallStackLog]
+Enabled=0
+[CallStackStripe]
+ShowTiming=1
+[Log file]
+LoggingEnabled=_ 0
+LogFile=_ ""
+Category=_ 0
+[Disassemble mode]
+mode=0
+[Breakpoints2]
+Bp0=_ 0 "EMUL_DATA" "UartReady" 0 0 0 0 4294967295
+Bp1=_ 1 "EMUL_DATA" "HAL_UART_Receive_DMA" 0 0 0 0 4294967295
+Bp2=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\Hardware\Src\hal_wifi.c}.299.4" 0 0 1 "" 0 "" 0
+Bp3=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\USMART\usmart.c}.271.5" 0 0 1 "" 0 "" 0
+Bp4=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\USMART\usmart.c}.163.3" 0 0 1 "" 0 "" 0
+Bp5=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\USMART\usmart_str.c}.324.3" 0 0 1 "" 0 "" 0
+Bp6=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\USMART\usmart_str.c}.342.5" 0 0 1 "" 0 "" 0
+Bp7=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Hardware\Src\hal_w25xflash.c}.331.1" 0 0 1 "" 0 "" 0
+Count=8
+[Aliases]
+A0=_ "D:\360тфел\Program\STM8_32\MySTM32F0\WifiClock\Src\main.c" "C:\Users\Administrator\Desktop\WifiClock\Src\main.c"
+Count=1
+SuppressDialog=1
